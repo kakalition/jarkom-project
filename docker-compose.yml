@@ -1,0 +1,46 @@
+version: "2"
+
+name: absensi
+services:
+  backend:
+    image: node:21
+    ports:
+      - 3000:3000
+    working_dir: /srv/backend
+    volumes:
+      - ./backend/.:/srv/backend
+    command: >
+      sh -c "npm install 
+      && npx nodemon main.js
+      "
+
+  frontend:
+    image: node:21
+    ports:
+      - 5173:5173
+    working_dir: /srv/frontend
+    volumes:
+      - ./frontend/.:/srv/frontend
+    command: >
+      sh -c "npm install 
+      && npm run dev
+      "
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./db/.:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  redis:
+    image: redis:7.0.9
+    ports:
+      - 6379:6379
